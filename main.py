@@ -1,101 +1,177 @@
-import requests
+# Global variables
+board = []
+nrows = 3
+MAX_MOVES = nrows * nrows
+
+players = ['X', 'O']
+EMPTY = '.'
 
 
-def get_rate(from_currency="EUR", to_currency="USD"):
+def initBoard():
+    """Initialises (or resets) the board to all empty positions."""
+    global board
+    board = [[EMPTY for _ in range(nrows)] for _ in range(nrows)]
+
+
+def showBoard():
+    """Prints the current board state to the terminal."""
+    for r in range(nrows):
+        for c in range(nrows):
+            print(" {}".format(board[r][c]), end='')
+        print()
+
+
+def checkMove(p):
     """
-    Fetches the live exchange rate between two currencies
-    using the Frankfurter API.
+    Checks whether player p has a winning sequence on the board.
 
     Args:
-        from_currency (str): Source currency code (default: EUR).
-        to_currency (str): Target currency code (default: USD).
+        p (str): The player symbol ('X' or 'O').
 
     Returns:
-        float: Exchange rate, or None if the request fails.
+        bool: True if the player has won, False otherwise.
     """
-    url = f"https://api.frankfurter.app/latest?from={from_currency}&to={to_currency}"
-    try:
-        response = requests.get(url, timeout=5)
-        response.raise_for_status()
-        data = response.json()
-        return data["rates"][to_currency]
-    except requests.exceptions.ConnectionError:
-        print("\nError: No internet connection. Please check your network.")
-        return None
-    except requests.exceptions.Timeout:
-        print("\nError: The request timed out. Please try again.")
-        return None
-    except requests.exceptions.RequestException as e:
-        print(f"\nError fetching exchange rate: {e}")
-        return None
+    seq, tseq = False, True
+
+    # Check rows
+    for r in range(nrows):
+        if seq:
+            break
+        tseq = True
+        for c in range(nrows):
+            if not tseq:
+                break
+            tseq = (board[r][c] == p)
+        seq = tseq
+
+    # Check columns
+    if not seq:
+        for c in range(nrows):
+            if seq:
+                break
+            tseq = True
+            for r in range(nrows):
+                if not tseq:
+                    break
+                tseq = (board[r][c] == p)
+            seq = tseq
+
+    # Check main diagonal (top-left to bottom-right)
+    if not seq:
+        tseq = True
+        for r in range(nrows):
+            if not tseq:
+                break
+            tseq = (board[r][r] == p)
+        seq = tseq
+
+    # Check anti-diagonal (top-right to bottom-left)
+    if not seq:
+        tseq = True
+        for r in range(nrows):
+            if not tseq:
+                break
+            tseq = (board[r][nrows - r - 1] == p)
+        seq = tseq
+
+    return seq
 
 
-def convert(amount, rate, direction):
+def readMove():
     """
-    Converts an amount between EUR and USD.
-
-    Args:
-        amount (float): The amount to convert.
-        rate (float): The EUR/USD exchange rate.
-        direction (int): 1 for EUR→USD, 2 for USD→EUR.
+    Prompts the current player to enter a valid move.
+    Validates range and checks the position is not already taken.
 
     Returns:
-        str: Formatted conversion result.
+        tuple: (row, column) as 1-based integers.
     """
-    if direction == 1:
-        result = amount * rate
-        return f"\nAmount in dollars: {amount} € -> {result:.2f} $"
-    else:
-        result = amount / rate
-        return f"\nAmount in euros: {amount} $ -> {result:.2f} €"
+    x, y, done = 0, 0, False
+
+    while not done:
+        while True:
+            try:
+                y = int(input("Row: "))
+                x = int(input("Column: "))
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+                continue
+
+            if 1 <= y <= nrows and 1 <= x <= nrows:
+                break
+            print("Choose values between 1 and {}".format(nrows))
+
+        if board[y - 1][x - 1] == EMPTY:
+            done = True
+        else:
+            print("Position taken. Choose another position.")
+
+    return y, x
+
+
+def play():
+    """Runs a single game of Tic-Tac-Toe until a win or draw."""
+    current_player, total_moves = 0, 0
+
+    initBoard()
+    while True:
+        p = players[current_player]
+        showBoard()
+        print("Player {} [{}]>".format(p, total_moves + 1))
+        r, c = readMove()
+        board[r - 1][c - 1] = p
+        total_moves += 1
+
+        if checkMove(p):
+            showBoard()
+            print("Player {} won in {} moves.".format(p, total_moves))
+            break
+        elif total_moves == MAX_MOVES:
+            showBoard()
+            print("Draw in {} moves.".format(total_moves))
+            break
+
+        current_player = (current_player + 1) % 2
+
+
+def instructions():
+    """Displays the game instructions."""
+    print("TIC-TAC-TOE INSTRUCTIONS")
+    print("========================")
+    print("Player 1 (X) enters the row and column for each move.")
+    print("Player 2 (O) plays after Player 1.")
+    print("Players keep playing until there is a winner or a draw.")
+    print()
+
+
+def menu():
+    """Displays the main menu."""
+    print("TIC-TAC-TOE")
+    print("===========")
+    print("1-Instructions")
+    print("2-Play")
+    print("3-Quit")
+    print()
 
 
 def main():
-    """Main loop — displays the menu and handles user input."""
-    print("\nFetching live exchange rate...")
-    rate = get_rate("EUR", "USD")
-
-    if rate is None:
-        print("Could not retrieve exchange rate. Exiting.")
-        return
-
-    print(f"Current rate: 1 EUR = {rate:.4f} USD\n")
-
-    menu = (
-        "Choose the conversion direction:\n"
-        "1. Euros -> Dollars\n"
-        "2. Dollars -> Euros\n"
-        "0. Quit\n> "
-    )
-
+    """Main loop — handles menu navigation."""
     while True:
+        menu()
         try:
-            direction = int(input(menu))
-
-            if direction == 0:
-                print("\nProgram stopped. See you next time!")
-                break
-
-            if direction not in (1, 2):
-                print("\nPlease choose only 1, 2 or 0.\n")
-                continue
-
-            amount = float(input("\nAmount (0 to quit): "))
-
-            if amount == 0:
-                print("\nProgram stopped. See you next time!")
-                break
-
-            if amount < 0:
-                print("\nAmount must be a positive number.\n")
-                continue
-
-            print(f"\nAmount: {amount}")
-            print(convert(amount, rate, direction))
-            break
-
+            n = int(input("Option: "))
         except ValueError:
-            print("\nInvalid value. Please enter a number.")
+            print("Invalid input. Please enter 1, 2 or 3.\n")
+            continue
+
+        if n == 1:
+            instructions()
+        elif n == 2:
+            play()
+        elif n == 3:
+            print("Thanks for playing. Goodbye!")
+            return
+        else:
+            print("Wrong option. Please choose 1, 2 or 3.\n")
 
 
 if __name__ == "__main__":
