@@ -1,101 +1,124 @@
-import requests
+"""
+Hangman Game
+------------
+A classic word-guessing game played in the terminal.
+The player guesses one letter at a time and has 6 lives.
+Each wrong guess updates the ASCII hangman drawing.
+"""
+
+import random
+from hangman_art import logo, stages
+from hangman_words import word_list
 
 
-def get_rate(from_currency="EUR", to_currency="USD"):
+def build_display(chosen_word, correct_letters):
     """
-    Fetches the live exchange rate between two currencies
-    using the Frankfurter API.
+    Builds the current word display with guessed letters revealed.
 
     Args:
-        from_currency (str): Source currency code (default: EUR).
-        to_currency (str): Target currency code (default: USD).
+        chosen_word (str): The word the player is trying to guess.
+        correct_letters (list): Letters correctly guessed so far.
 
     Returns:
-        float: Exchange rate, or None if the request fails.
+        str: The word with underscores for unguessed letters.
+             e.g. "_ a _ _ o _"
     """
-    url = f"https://api.frankfurter.app/latest?from={from_currency}&to={to_currency}"
-    try:
-        response = requests.get(url, timeout=5)
-        response.raise_for_status()
-        data = response.json()
-        return data["rates"][to_currency]
-    except requests.exceptions.ConnectionError:
-        print("\nError: No internet connection. Please check your network.")
-        return None
-    except requests.exceptions.Timeout:
-        print("\nError: The request timed out. Please try again.")
-        return None
-    except requests.exceptions.RequestException as e:
-        print(f"\nError fetching exchange rate: {e}")
-        return None
+    display = ""
+    for letter in chosen_word:
+        if letter in correct_letters:
+            display += letter
+        else:
+            display += "_"
+    return display
 
 
-def convert(amount, rate, direction):
+def get_guess(correct_letters, wrong_letters):
     """
-    Converts an amount between EUR and USD.
+    Prompts the player to enter a single letter and validates input.
+    Warns if the letter has already been guessed.
 
     Args:
-        amount (float): The amount to convert.
-        rate (float): The EUR/USD exchange rate.
-        direction (int): 1 for EUR→USD, 2 for USD→EUR.
+        correct_letters (list): Already correctly guessed letters.
+        wrong_letters (list): Already incorrectly guessed letters.
 
     Returns:
-        str: Formatted conversion result.
+        str: A valid, single lowercase letter not yet guessed,
+             or None if the letter was already guessed.
     """
-    if direction == 1:
-        result = amount * rate
-        return f"\nAmount in dollars: {amount} € -> {result:.2f} $"
-    else:
-        result = amount / rate
-        return f"\nAmount in euros: {amount} $ -> {result:.2f} €"
+    guess = input("Guess a letter: ").lower().strip()
+
+    if len(guess) != 1 or not guess.isalpha():
+        print("Please enter a single letter.\n")
+        return None
+
+    if guess in correct_letters or guess in wrong_letters:
+        print(f"You've already guessed '{guess}'. Try a different letter.\n")
+        return None
+
+    return guess
+
+
+def play_hangman():
+    """
+    Runs a full game of Hangman.
+    Picks a random word, handles the game loop, and
+    prints the result (win or lose) at the end.
+    """
+    lives = 6
+    correct_letters = []
+    wrong_letters = []
+    game_over = False
+
+    chosen_word = random.choice(word_list)
+
+    print(logo)
+    print(stages[lives])
+
+    while not game_over:
+        display = build_display(chosen_word, correct_letters)
+
+        print(f"{'*' * 28} {lives}/6 LIVES LEFT {'*' * 28}")
+        print("Word to guess: " + " ".join(display) + "\n")
+
+        if wrong_letters:
+            print(f"Wrong guesses: {', '.join(wrong_letters)}\n")
+
+        guess = get_guess(correct_letters, wrong_letters)
+
+        if guess is None:
+            continue
+
+        if guess in chosen_word:
+            correct_letters.append(guess)
+            print(f"\n✅ '{guess}' is in the word!\n")
+        else:
+            wrong_letters.append(guess)
+            lives -= 1
+            print(f"\n❌ '{guess}' is not in the word. You lose a life.\n")
+            print(stages[lives])
+
+        display = build_display(chosen_word, correct_letters)
+
+        if "_" not in display:
+            game_over = True
+            print("Word to guess: " + " ".join(display))
+            print("\n****************************YOU WIN!****************************")
+            print(f"You guessed '{chosen_word}' correctly! 🎉")
+
+        elif lives == 0:
+            game_over = True
+            print(f"\n***********************YOU LOSE**********************")
+            print(f"The word was: '{chosen_word}'.")
 
 
 def main():
-    """Main loop — displays the menu and handles user input."""
-    print("\nFetching live exchange rate...")
-    rate = get_rate("EUR", "USD")
-
-    if rate is None:
-        print("Could not retrieve exchange rate. Exiting.")
-        return
-
-    print(f"Current rate: 1 EUR = {rate:.4f} USD\n")
-
-    menu = (
-        "Choose the conversion direction:\n"
-        "1. Euros -> Dollars\n"
-        "2. Dollars -> Euros\n"
-        "0. Quit\n> "
-    )
-
+    """Entry point — starts the game and offers a replay option."""
     while True:
-        try:
-            direction = int(input(menu))
-
-            if direction == 0:
-                print("\nProgram stopped. See you next time!")
-                break
-
-            if direction not in (1, 2):
-                print("\nPlease choose only 1, 2 or 0.\n")
-                continue
-
-            amount = float(input("\nAmount (0 to quit): "))
-
-            if amount == 0:
-                print("\nProgram stopped. See you next time!")
-                break
-
-            if amount < 0:
-                print("\nAmount must be a positive number.\n")
-                continue
-
-            print(f"\nAmount: {amount}")
-            print(convert(amount, rate, direction))
+        play_hangman()
+        replay = input("\nPlay again? (yes / no): ").strip().lower()
+        if replay not in ("yes", "y"):
+            print("\nThanks for playing Hangman! Goodbye. 👋")
             break
-
-        except ValueError:
-            print("\nInvalid value. Please enter a number.")
 
 
 if __name__ == "__main__":
