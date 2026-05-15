@@ -1,102 +1,119 @@
-import requests
+BANNER = r'''
+*******************************************************************************
+          |                   |                  |                     |
+ _________|________________.=""_;=.______________|_____________________|_______
+|                   |  ,-"_,=""     `"=.|                  |
+|___________________|__"=._o`"-._        `"=.______________|___________________
+          |                `"=._o`"=._      _`"=._                     |
+ _________|_____________________:=._o "=._."_.-="'"=.__________________|_______
+|                   |    __.--" , ; `"=._o." ,-"""-._ ".   |
+|___________________|_._"  ,. .` ` `` ,  `"-._"-._   ". '__|___________________
+          |           |o`"=._` , "` `; .". ,  "-._"-._; ;              |
+ _________|___________| ;`-.o`"=._; ." ` '`."\ ` . "-._ /_______________|_______
+|                   | |o ;    `"-.o`"=._``  '` " ,__.--o;   |
+|___________________|_| ;     (#) `-.o `"=.`_.--"_o.-; ;___|___________________
+____/______/______/___|o;._    "      `".o|o_.--"    ;o;____/______/______/____
+/______/______/______/_"=._o--._        ; | ;        ; ;/______/______/______/_
+____/______/______/______/__"=._o--._   ;o|o;     _._;o;____/______/______/____
+/______/______/______/______/____"=._o._; | ;_.--"o.--"_/______/______/______/_
+____/______/______/______/______/_____"=.o|o_.--""___/______/______/______/____
+/______/______/______/______/______/______/______/______/______/______/_____ /
+*******************************************************************************
+'''
 
 
-def get_rate(from_currency="EUR", to_currency="USD"):
+def intro():
+    """Displays the welcome banner and introduction text."""
+    print(BANNER)
+    print("Welcome to the Lost Treasure Island! 🏝️\n")
+    print("You are a brave explorer who discovered an ancient map.")
+    print("The treasure is hidden somewhere on the island...")
+    print("Good luck on your adventure!\n")
+    print("You arrive at a fork in the jungle path.")
+    print("To the LEFT, you see a narrow path covered with vines and exotic flowers.")
+    print("To the RIGHT, there's a wide path with recent footprints on the ground.\n")
+
+
+def choose_door():
     """
-    Fetches the live exchange rate between two currencies
-    using the Frankfurter API.
-
-    Args:
-        from_currency (str): Source currency code (default: EUR).
-        to_currency (str): Target currency code (default: USD).
-
-    Returns:
-        float: Exchange rate, or None if the request fails.
+    Handles the final cave decision (door choice).
+    Returns True if the player wins, False otherwise.
     """
-    url = f"https://api.frankfurter.app/latest?from={from_currency}&to={to_currency}"
-    try:
-        response = requests.get(url, timeout=5)
-        response.raise_for_status()
-        data = response.json()
-        return data["rates"][to_currency]
-    except requests.exceptions.ConnectionError:
-        print("\nError: No internet connection. Please check your network.")
-        return None
-    except requests.exceptions.Timeout:
-        print("\nError: The request timed out. Please try again.")
-        return None
-    except requests.exceptions.RequestException as e:
-        print(f"\nError fetching exchange rate: {e}")
-        return None
+    print("\nYou enter the dark cave. In front of you are three mysterious doors:")
+    print("🔴 RED Door    — Glows intensely with flame drawings")
+    print("🟡 YELLOW Door — Has gold symbols engraved")
+    print("🔵 BLUE Door   — Drips water and you hear a river\n")
 
+    path_3 = input("Which door do you choose? (red / yellow / blue)\n> ").strip().lower()
 
-def convert(amount, rate, direction):
-    """
-    Converts an amount between EUR and USD.
-
-    Args:
-        amount (float): The amount to convert.
-        rate (float): The EUR/USD exchange rate.
-        direction (int): 1 for EUR→USD, 2 for USD→EUR.
-
-    Returns:
-        str: Formatted conversion result.
-    """
-    if direction == 1:
-        result = amount * rate
-        return f"\nAmount in dollars: {amount} € -> {result:.2f} $"
+    if path_3 == "red":
+        print("\nDEATH 🔥")
+        print("You opened the door and were consumed by fire! ❌ GAME OVER! ❌")
+        return False
+    elif path_3 == "blue":
+        print("\nDEATH 🌊")
+        print("You opened the door and were swept away by a flood! ❌ GAME OVER! ❌")
+        return False
+    elif path_3 == "yellow":
+        print("\nVICTORY 🏆")
+        print("You opened the yellow door and found the treasure! 💰💎👑 Congratulations, you win!")
+        return True
     else:
-        result = amount / rate
-        return f"\nAmount in euros: {amount} $ -> {result:.2f} €"
+        print("\nInvalid choice. The cave rumbles and collapses... ❌ GAME OVER! ❌")
+        return False
 
 
-def main():
-    """Main loop — displays the menu and handles user input."""
-    print("\nFetching live exchange rate...")
-    rate = get_rate("EUR", "USD")
+def cross_lake():
+    """
+    Handles the lake crossing decision.
+    Returns True if the player survives, False otherwise.
+    """
+    print("\n--- Lake with Island ---")
+    print("After hours of walking, you reach a crystal-clear lake.")
+    print("In the middle of the lake, you see a small island with a mysterious cave.\n")
+    print("SWIM — Cross the lake yourself.")
+    print("WAIT — Wait for help.")
+    print("BOAT — Look for a boat nearby.\n")
 
-    if rate is None:
-        print("Could not retrieve exchange rate. Exiting.")
-        return
+    path_2 = input("Will you cross? (swim / wait / boat)\n> ").strip().lower()
 
-    print(f"Current rate: 1 EUR = {rate:.4f} USD\n")
+    if path_2 == "wait":
+        print("\nYou waited patiently. A mysterious boatman appeared and took you safely to the island! ✅")
+        return True
+    elif path_2 == "swim":
+        print("\nYou started swimming but piranhas attacked you! ❌ GAME OVER! ❌")
+        return False
+    elif path_2 == "boat":
+        print("\nWhile you were looking for a boat, a giant crocodile got you! ❌ GAME OVER! ❌")
+        return False
+    else:
+        print("\nInvalid choice. Hesitating too long, quicksand swallowed you... ❌ GAME OVER! ❌")
+        return False
 
-    menu = (
-        "Choose the conversion direction:\n"
-        "1. Euros -> Dollars\n"
-        "2. Dollars -> Euros\n"
-        "0. Quit\n> "
-    )
 
-    while True:
-        try:
-            direction = int(input(menu))
+def treasure_hunt():
+    """
+    Main game function. Guides the player through the three
+    decision points of the treasure hunt adventure.
+    """
+    intro()
 
-            if direction == 0:
-                print("\nProgram stopped. See you next time!")
-                break
+    path_1 = input("Choose your path. Narrow path turn LEFT. Wide path turn RIGHT.\n> ").strip().lower()
 
-            if direction not in (1, 2):
-                print("\nPlease choose only 1, 2 or 0.\n")
-                continue
+    if path_1 == "left":
+        print("\nYou continue safely! ✅")
+        if not cross_lake():
+            return
+        if not choose_door():
+            return
 
-            amount = float(input("\nAmount (0 to quit): "))
+    elif path_1 == "right":
+        print("\nYou followed the footprints and were attacked by wild monkeys! ❌ GAME OVER! ❌")
 
-            if amount == 0:
-                print("\nProgram stopped. See you next time!")
-                break
-
-            if amount < 0:
-                print("\nAmount must be a positive number.\n")
-                continue
-
-            print(f"\nAmount: {amount}")
-            print(convert(amount, rate, direction))
-            break
-
-        except ValueError:
-            print("\nInvalid value. Please enter a number.")
+    else:
+        print("\nInvalid choice. You wandered into the jungle and got lost... ❌ GAME OVER! ❌")
 
 
 if __name__ == "__main__":
-    main()
+    treasure_hunt()
+    print("\nThank you for playing!")

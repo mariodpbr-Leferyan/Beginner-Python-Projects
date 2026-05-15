@@ -1,45 +1,37 @@
-# 💱 Simple Currency Converter — EUR ↔ USD
+# 🏝️ Treasure Hunt — Text Adventure Game
 
-A command-line currency converter that fetches **live exchange rates** from a public API and converts between Euros and US Dollars.
+A terminal-based **text adventure game** where the player explores a mysterious island in search of hidden treasure. Every choice matters!
 
 \---
 
 ## 🚀 Features
 
-* Fetches real-time EUR/USD exchange rates via the [Frankfurter API](https://www.frankfurter.app/)
-* Converts EUR → USD or USD → EUR
-* Input validation with error handling
-* Simple and intuitive menu interface
+* Interactive branching story with multiple paths
+* Three decision points with different outcomes
+* ASCII art introduction
+* Clear win/lose feedback at each stage
+* Beginner-friendly code structure
 
 \---
 
 ## 🛠️ Technologies
 
 * Python 3.x
-* `requests` library
-* [Frankfurter API](https://www.frankfurter.app/) (free, no API key required)
+* No external libraries required
 
 \---
 
-## ⚙️ Installation
+## ⚙️ Installation \& Run
 
 1. Clone the repository:
 
 git clone https://github.com/mariodpbr-Leferyan/python-projects.git
-cd python-projects/currency\_converter
+cd python-projects/treasure\_hunt
 
 
-
-2. Install dependencies:
-
-pip install -r requirements.txt
-
-
-
-3. Run the program:
+2. Run the program:
 
 python main.py
-
 
 
 \---
@@ -47,16 +39,44 @@ python main.py
 ## 📋 Usage Example
 
 ```
-Choose the conversion direction:
-1. Euros -> Dollars
-2. Dollars -> Euros
-0. Quit
-> 1
+Welcome to the Lost Treasure Island! 🏝️
 
-Amount (0 to quit): 100
+You arrive at a fork in the jungle path.
+To the LEFT, a narrow path covered with vines and exotic flowers.
+To the RIGHT, a wide path with recent footprints on the ground.
 
-Amount: 100.0
-Amount in dollars: 100.0 € -> 108.32 $
+Choice your path. Narrow path turn LEFT. Wide path turn RIGHT.
+> left
+
+You continue safely! ✅
+
+Lake with Island
+After hours of walking, you reach a crystal-clear lake...
+Will you cross? Choice SWIM, WAIT or BOAT.
+> wait
+
+You waited patiently. A mysterious boatman appeared! ✅
+...
+🔴 RED | 🟡 YELLOW | 🔵 BLUE — Which door do you choose?
+> yellow
+
+VICTORY 🏆 You found the treasure! 💰💎👑
+```
+
+\---
+
+## 🗺️ Story Map
+
+```
+Start
+ ├── LEFT ✅
+ │    └── WAIT ✅
+ │         ├── YELLOW → 🏆 WIN
+ │         ├── RED    → 💀 GAME OVER
+ │         └── BLUE   → 💀 GAME OVER
+ │    ├── SWIM → 💀 GAME OVER
+ │    └── BOAT → 💀 GAME OVER
+ └── RIGHT → 💀 GAME OVER
 ```
 
 \---
@@ -64,10 +84,9 @@ Amount in dollars: 100.0 € -> 108.32 $
 ## 📁 Project Structure
 
 ```
-currency\\\\\\\_converter/
-├── main.py            # Main application
-├── requirements.txt   # Dependencies
-└── README.md          # This file
+treasure\_hunt/
+├── main.py     # Main application
+└── README.md   # This file
 ```
 
 \---
