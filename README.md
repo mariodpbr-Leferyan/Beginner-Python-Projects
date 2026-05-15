@@ -1,45 +1,38 @@
-# 💱 Simple Currency Converter — EUR ↔ USD
+# ❌⭕ Tic-Tac-Toe — Python CLI Game
 
-A command-line currency converter that fetches **live exchange rates** from a public API and converts between Euros and US Dollars.
+A classic **Tic-Tac-Toe** two-player game played in the terminal, built with pure Python.
 
 \---
 
 ## 🚀 Features
 
-* Fetches real-time EUR/USD exchange rates via the [Frankfurter API](https://www.frankfurter.app/)
-* Converts EUR → USD or USD → EUR
-* Input validation with error handling
-* Simple and intuitive menu interface
+* Two-player mode (X and O)
+* Dynamic board display after each move
+* Win detection across rows, columns and both diagonals
+* Draw detection when the board is full
+* Input validation — rejects out-of-bounds and already-taken positions
+* Instructions menu included
 
 \---
 
 ## 🛠️ Technologies
 
 * Python 3.x
-* `requests` library
-* [Frankfurter API](https://www.frankfurter.app/) (free, no API key required)
+* No external libraries required
 
 \---
 
-## ⚙️ Installation
+## ⚙️ Installation \& Run
 
 1. Clone the repository:
 
 git clone https://github.com/mariodpbr-Leferyan/python-projects.git
-cd python-projects/currency\_converter
+cd python-projects/tic\_tac\_toe
 
 
-
-2. Install dependencies:
-
-pip install -r requirements.txt
-
-
-
-3. Run the program:
+2. Run the program:
 
 python main.py
-
 
 
 \---
@@ -47,27 +40,46 @@ python main.py
 ## 📋 Usage Example
 
 ```
-Choose the conversion direction:
-1. Euros -> Dollars
-2. Dollars -> Euros
-0. Quit
-> 1
+TIC-TAC-TOE
+===========
+1-Instructions
+2-Play
+3-Quit
 
-Amount (0 to quit): 100
+Option: 2
 
-Amount: 100.0
-Amount in dollars: 100.0 € -> 108.32 $
-```
+ . . .
+ . . .
+ . . .
+Player X \[1]>
+Row: 2
+Column: 2
+
+ . . .
+ . X .
+ . . .
+Player O \[2]>
+...
+Player X won in 5 moves.
+
+
+\---
+
+## 🧠 How It Works
+
+* The board is a 3×3 matrix initialized with empty positions (`.`)
+* Each turn, the active player inputs a row and column (1–3)
+* After each move, the game checks all rows, columns and diagonals for a winning sequence
+* If all 9 positions are filled with no winner, the game ends in a draw
 
 \---
 
 ## 📁 Project Structure
 
 ```
-currency\\\\\\\_converter/
-├── main.py            # Main application
-├── requirements.txt   # Dependencies
-└── README.md          # This file
+tic\_tac\_toe/
+├── main.py     # Main application
+└── README.md   # This file
 ```
 
 \---
