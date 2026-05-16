@@ -26,7 +26,7 @@ A classic **Tic-Tac-Toe** two-player game played in the terminal, built with pur
 
 1. Clone the repository:
 
-git clone https://github.com/mariodpbr-Leferyan/python-projects.git
+git clone https://github.com/mariodpbr-Leferyan/Beginner-Python-Projectss.git
 cd python-projects/tic\_tac\_toe
 
 
