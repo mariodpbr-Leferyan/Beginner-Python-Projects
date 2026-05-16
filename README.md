@@ -25,7 +25,7 @@ A command-line currency converter that fetches **live exchange rates** from a pu
 
 1. Clone the repository:
 
-git clone https://github.com/mariodpbr-Leferyan/python-projects.git
+git clone https://github.com/mariodpbr-Leferyan/Beginner-Python-Projectss.git
 cd python-projects/currency\_converter
 
 
