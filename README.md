@@ -25,7 +25,7 @@ A terminal-based **text adventure game** where the player explores a mysterious 
 
 1. Clone the repository:
 
-git clone https://github.com/mariodpbr-Leferyan/python-projects.git
+git clone https://github.com/mariodpbr-Leferyan/Beginner-Python-Projectss.git
 cd python-projects/treasure\_hunt
 
 
