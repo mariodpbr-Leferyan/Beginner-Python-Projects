@@ -26,7 +26,7 @@ A classic **Hangman** word-guessing game played in the terminal, built with pure
 
 1. Clone the repository:
 
-git clone https://github.com/mariodpbr-Leferyan/python-projects.git
+git clone https://github.com/mariodpbr-Leferyan/Beginner-Python-Projectss.git
 cd python-projects/hangman
 
 
